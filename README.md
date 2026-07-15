@@ -1,69 +1,102 @@
-# 1D CNN for NER Project
-
-## Project Description
-This project focuses on the development and implementation of a 1D Convolutional Neural Network (CNN) for Named Entity Recognition (NER). The primary aim is to accurately identify and classify entities in text data, enhancing the ability to process and organize information from unstructured data sources.
-
-## Models Compared
-In this project, we compare the performance of the 1D CNN model against several other models:
-- Bi-LSTM
-- Conditional Random Fields (CRF)
-- Support Vector Machines (SVM)
-
-The comparison is based on accuracy, precision, recall, and F1-score across various datasets.
-
-## Project Structure
+# Named Entity Recognition (NER) Benchmark
+### Evaluating 1D CNN, Simple RNN, and Multi-Layer Perceptron (MLP) Architectures on Sequence Tagging in TensorFlow/Keras
+---
+## 📌 Project Overview
+This project presents a comparative study of three neural network architectures for **Named Entity Recognition (NER)** (sequence tagging) tasks. Using tokenized sentence records (`ner.csv`), the project maps input word sequences to their respective Part-of-Speech (POS) tags and IOB (Inside-Outside-Beginning) entity classifications (e.g., `B-per`, `B-geo`, `I-geo`, `O`). 
+Three models are trained, evaluated, and saved:
+1. **1D Convolutional Neural Network (1D CNN)**
+2. **Simple Recurrent Neural Network (RNN)**
+3. **Multi-Layer Perceptron (MLP)**
+---
+## 📂 Repository Structure
+* **`1DCNN.ipynb`**: The complete Jupyter Notebook covering data loading (`ner.csv`), sentence length plotting, train-test splitting (80/20), model definitions, training loops (2 epochs, batch size 64), weight saving, out-of-sample sentence prediction, and performance evaluations.
+* **`cnn_model.weights.h5`**: Trained weights for the 1D CNN model.
+* **`rnn_model.weights.h5`**: Trained weights for the Simple RNN model.
+* **`mlp_model.weights.h5`**: Trained weights for the MLP model.
+---
+## 🧠 Model Architectures
+### 1. 1D CNN Model
+Uses temporal convolutions over token embedding sequences to capture localized n-gram context patterns.
+* Embedding layer mapping to dense vectors.
+* Conv1D layer (128 filters, kernel size 3, ReLU activation) + Dropout (0.3).
+* Conv1D layer (64 filters, kernel size 3, ReLU activation) + Dropout (0.3).
+* Dense projection (128 units, ReLU) + Softmax classification layer.
+### 2. Simple RNN Model
+Captures sequential relationships across sentences using recurrent connections.
+* Embedding layer mapping to dense vectors.
+* SimpleRNN layer (100 hidden units) returning sequence outputs.
+* Dense softmax classification layer.
+### 3. Multi-Layer Perceptron (MLP) Model
+Evaluates each word token independently using time-distributed dense connections.
+* Embedding layer mapping to dense vectors.
+* TimeDistributed Dense hidden layer (64 units, ReLU).
+* TimeDistributed Dense softmax classification layer.
+---
+## 📈 Evaluation & Results
+### 1. Test Set Accuracy Comparison
+The models were evaluated on the test partition, yielding the following results:
+|
+ Model 
+|
+ Test Accuracy 
+|
+ Test Loss 
+|
+|
+:---
+|
+:---:
+|
+:---:
+|
+|
+**
+1D CNN
+**
+|
+**
+99.34%
+**
+|
+**
+0.0219
+**
+|
+|
+**
+Simple RNN
+**
+|
+ 99.21% 
+|
+ 0.0261 
+|
+|
+**
+MLP
+**
+|
+ 98.94% 
+|
+ 0.0383 
+|
+### 2. Entity Tagging Test Case
+We tested each model on an out-of-sample sentence:
+* **Input Sentence:** *"Bob bought a ticket to NewYork City yesterday."*
+* **Target Tags:** `['B-per', 'O', 'O', 'O', 'O', 'B-geo', 'I-geo', 'O']`
+#### Prediction Outcomes:
+* **1D CNN Prediction:** `['B-per', 'O', 'O', 'O', 'O', 'B-geo', 'I-geo', 'O']` — **100% Correct** (successfully identified both "Bob" as a person and "NewYork City" as a geographical location).
+* **Simple RNN Prediction:** `['B-per', 'O', 'O', 'O', 'O', 'O', 'I-geo', 'O']` — **Incorrect** (missed "NewYork").
+* **MLP Prediction:** `['B-per', 'O', 'O', 'O', 'O', 'O', 'I-geo', 'O']` — **Incorrect** (missed "NewYork").
+---
+## 🚀 Getting Started
+### Prerequisites
+Install dependencies:
+```bash
+pip install numpy pandas tensorflow matplotlib scikit-learn tabulate
 ```
-NER1DCNN/
-│
-├── data/
-│   ├── raw/
-│   ├── processed/
-│
-├── models/
-│   ├── 1d_cnn.py
-│   ├── bi_lstm.py
-│   ├── crf.py
-│   ├── svm.py
-│
-├── notebooks/
-│   ├── exploration.ipynb
-│   └── results.ipynb
-│
-├── requirements.txt
-├── README.md
-└── main.py
-```
-
-## Installation Instructions
-To set up this project, follow these steps:
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/gmgurung/NER1DCNN.git
-   cd NER1DCNN
-   ```
-2. Install the required packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Usage Guide
-To run the model:
-1. Prepare your dataset and save it in the `data/raw/` directory.
-2. Run the main script:
-   ```bash
-   python main.py
-   ```
-3. Results will be saved in the `results` folder for further analysis.
-
-## Technical Details
-### 1D CNN Architecture
-This model employs a convolutional architecture specifically designed to process sequential data. Key components include:
-- **Convolutional Layers**: Extract local patterns and features from the input sequence.
-- **Pooling Layers**: Reduce dimensionality and retain essential features.
-- **Fully Connected Layers**: Classify the extracted features into different entity categories.
-
-### Collaborator Information
-This project is a collaborative effort with Junkai Ge, contributing towards its development and improvements.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Running the Project
+1. Open the repository root directory.
+2. Ensure `ner.csv` is present in the root.
+3. Open and run the `1DCNN.ipynb` notebook cell-by-cell.
+4. Trained weights will automatically save to their respective `.weights.h5` files, which can then be re-loaded for real-time predictions.
